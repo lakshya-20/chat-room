@@ -41,4 +41,9 @@ io.on('connection', function(socket) {
    socket.on('msg', function(data) {            
       io.sockets.in(roomId).emit('newmsg', data);      
    })
+
+   socket.on('leave',function(data){
+      socket.leave(roomId);
+      console.log("Leaving...")
+   })
 });
