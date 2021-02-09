@@ -31,18 +31,16 @@ users = [];
 
 
 io.on('connection', function(socket) {   
+
    var roomId='';
    socket.on('connectToRoom',function(data){
-       roomId=data;
-       //console.log("RoomId "+roomId);
-       socket.join("room-"+roomId);
-       io.sockets.in("room-"+roomId).emit('connectedToRoom', "You are in room no. "+roomId);       
-       console.log('A user connected in room: '+"room"+roomId);
+       roomId=data;       
+       socket.join(roomId);
+       io.sockets.in(roomId).emit('connectedToRoom', "You are in room: "+roomId);       
+       console.log('A user connected in room: '+roomId);
    })
 
-   socket.on('setUsername', function(data) {
-      //console.log(data);
-      
+   socket.on('setUsername', function(data) {      
       if(users.indexOf(data) > -1) {
          socket.emit('userExists', data + ' username is taken! Try some other username.');
       } else {
@@ -51,9 +49,7 @@ io.on('connection', function(socket) {
       }
    });
    
-   socket.on('msg', function(data) {
-      //Send message to everyone
-      console.log("New Message");
-      io.sockets.in("room-"+roomId).emit('newmsg', data);
+   socket.on('msg', function(data) {            
+      io.sockets.in(roomId).emit('newmsg', data);      
    })
 });
