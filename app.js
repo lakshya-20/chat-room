@@ -7,31 +7,20 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/',(req,res)=>{
-    res.sendFile('index.html');
+    res.sendFile('try.html');
 })
 
-const port=process.env.PORT || 5001;
+const port=process.env.PORT || 5008;
 var server = app.listen( port ,()=>{
     console.log("Server running on port "+port);
 });
 var io = require('socket.io')(server);
 
 users = [];
-// var namespace='';
-
-// var nsp=io.of('/');
-// app.get('/namespace',(req,res)=>{
-//     console.log("Entered");
-//     namespace=req.body.namespace;
-//     nsp=io.of('/one');
-//     res.status(200).send("OK");
-// })
-
-
 
 
 io.on('connection', function(socket) {   
-
+   console.log("New Connection");
    var roomId='';
    socket.on('connectToRoom',function(data){
        roomId=data;       
