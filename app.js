@@ -7,42 +7,29 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/',(req,res)=>{
-    res.sendFile('index.html');
+    res.sendFile('try.html');
 })
 
-const port=process.env.PORT || 5001;
+const port=process.env.PORT || 5008;
 var server = app.listen( port ,()=>{
     console.log("Server running on port "+port);
 });
 var io = require('socket.io')(server);
 
 users = [];
-// var namespace='';
-
-// var nsp=io.of('/');
-// app.get('/namespace',(req,res)=>{
-//     console.log("Entered");
-//     namespace=req.body.namespace;
-//     nsp=io.of('/one');
-//     res.status(200).send("OK");
-// })
-
-
 
 
 io.on('connection', function(socket) {   
+   console.log("New Connection");
    var roomId='';
    socket.on('connectToRoom',function(data){
-       roomId=data;
-       //console.log("RoomId "+roomId);
-       socket.join("room-"+roomId);
-       io.sockets.in("room-"+roomId).emit('connectedToRoom', "You are in room no. "+roomId);       
-       console.log('A user connected in room: '+"room"+roomId);
+       roomId=data;       
+       socket.join(roomId);
+       io.sockets.in(roomId).emit('connectedToRoom', "You are in room: "+roomId);       
+       console.log('A user connected in room: '+roomId);
    })
 
-   socket.on('setUsername', function(data) {
-      //console.log(data);
-      
+   socket.on('setUsername', function(data) {      
       if(users.indexOf(data) > -1) {
          socket.emit('userExists', data + ' username is taken! Try some other username.');
       } else {
@@ -51,9 +38,12 @@ io.on('connection', function(socket) {
       }
    });
    
-   socket.on('msg', function(data) {
-      //Send message to everyone
-      console.log("New Message");
-      io.sockets.in("room-"+roomId).emit('newmsg', data);
+   socket.on('msg', function(data) {            
+      io.sockets.in(roomId).emit('newmsg', data);      
+   })
+
+   socket.on('leave',function(data){
+      socket.leave(roomId);
+      console.log("Leaving...")
    })
 });
