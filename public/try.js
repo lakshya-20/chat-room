@@ -24,7 +24,7 @@ function set_room(){
     <button type="button" class="btn btn-danger" name="leave_btn" onclick="leave()">\
     Leave\
  </button>';
-    socket.emit('connectToRoom',roomId);
+    socket.emit('connectToRoom',{user, roomId});
 }
 
 function sendMessage() {

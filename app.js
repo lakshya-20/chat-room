@@ -23,9 +23,11 @@ io.on('connection', function(socket) {
    console.log("New Connection");
    var roomId='';
    socket.on('connectToRoom',function(data){
-       roomId=data;       
+       user = data.user;
+       roomId = data.roomId;     
        socket.join(roomId);
-       io.sockets.in(roomId).emit('connectedToRoom', "You are in room: "+roomId);       
+       socket.emit('connectedToRoom', "You are in room: "+roomId);      
+       io.sockets.in(roomId).emit('newmsg', {message: `${user} joined the chat`, user: "ChatBot"});
        console.log('A user connected in room: '+roomId);
    })
 
@@ -39,7 +41,7 @@ io.on('connection', function(socket) {
    });
    
    socket.on('msg', function(data) {            
-      io.sockets.in(roomId).emit('newmsg', data);      
+      io.sockets.in(roomId).emit('newmsg', data);
    })
 
    socket.on('leave',function(data){
