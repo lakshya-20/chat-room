@@ -37,7 +37,6 @@ io.on('connection', function (socket) {
          socket.emit('userExists', user + ' username is taken! Try some other username.');
       } else {
          users.push(user);
-         console.log(user);
          socket.emit('userSet', { user });
       }
    });
@@ -47,7 +46,10 @@ io.on('connection', function (socket) {
    })
 
    socket.on('leave', function (data) {
+      const user = data.user;
+      const roomId = data.roomId;
       socket.leave(roomId);
-      console.log("Leaving...")
+      console.log(`${user} left the room: ${roomId}`);
+      io.sockets.in(roomId).emit('newMessage', { message: `${user} left the chat`, user: "ChatBot" });
    })
 });

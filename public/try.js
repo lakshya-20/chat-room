@@ -28,7 +28,7 @@ function sendMessage() {
 
 function leave() {
    if (confirm("Are you sure?")) {
-      socket.emit('leave', roomId);
+      socket.emit('leave', {user, roomId});
       document.getElementById('message-container').innerHTML = '';
       document.getElementById('room_data_wrapper').innerHTML = '';
       document.getElementById("input_wrapper").innerHTML = '<label for="room_data">Enter RoomId:</label>\
