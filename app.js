@@ -6,45 +6,47 @@ const app = express();
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.get('/',(req,res)=>{
-    res.sendFile('try.html');
+app.get('/', (req, res) => {
+   res.sendFile('try.html');
 })
 
-const port=process.env.PORT || 5000;
-var server = app.listen( port ,()=>{
-    console.log("Server running on port "+port);
+const port = process.env.PORT || 5000;
+var server = app.listen(port, () => {
+   console.log("Server running on port " + port);
 });
 var io = require('socket.io')(server);
 
-users = [];
+const users = [];
 
 
-io.on('connection', function(socket) {   
+io.on('connection', function (socket) {
    console.log("New Connection");
-   var roomId='';
-   socket.on('connectToRoom',function(data){
-       user = data.user;
-       roomId = data.roomId;     
-       socket.join(roomId);
-       socket.emit('connectedToRoom', "You are in room: "+roomId);      
-       io.sockets.in(roomId).emit('newmsg', {message: `${user} joined the chat`, user: "ChatBot"});
-       console.log('A user connected in room: '+roomId);
+
+   socket.on('connectToRoom', function (data) {
+      const user = data.user;
+      const roomId = data.roomId;
+      socket.join(roomId);
+      socket.emit('connectedToRoom', "You are in room: " + roomId);
+      io.sockets.in(roomId).emit('newMessage', { message: `${user} joined the chat`, user: "ChatBot" });
+      console.log('A user connected in room: ' + roomId);
    })
 
-   socket.on('setUsername', function(data) {      
-      if(users.indexOf(data) > -1) {
-         socket.emit('userExists', data + ' username is taken! Try some other username.');
+   socket.on('setUsername', function (data) {
+      const user = data.user;
+      if (users.indexOf(user) > -1) {
+         socket.emit('userExists', user + ' username is taken! Try some other username.');
       } else {
-         users.push(data);
-         socket.emit('userSet', {username: data});
+         users.push(user);
+         console.log(user);
+         socket.emit('userSet', { user });
       }
    });
-   
-   socket.on('msg', function(data) {            
-      io.sockets.in(roomId).emit('newmsg', data);
+
+   socket.on('message', function (data) {
+      io.sockets.in(roomId).emit('newMessage', data);
    })
 
-   socket.on('leave',function(data){
+   socket.on('leave', function (data) {
       socket.leave(roomId);
       console.log("Leaving...")
    })
