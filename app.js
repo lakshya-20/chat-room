@@ -42,6 +42,7 @@ io.on('connection', function (socket) {
    });
 
    socket.on('message', function (data) {
+      roomId = data.roomId;
       io.sockets.in(roomId).emit('newMessage', data);
    })
 

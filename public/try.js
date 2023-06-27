@@ -22,7 +22,7 @@ function sendMessage() {
    var message = document.getElementById('message').value;
    document.getElementById('message').value = '';
    if (message) {
-      socket.emit('message', { message, user });
+      socket.emit('message', { message, user, roomId });
    }
 }
 
